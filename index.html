@@ -1,0 +1,184 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Household builder</title>
+        <style>
+            .debug {
+                font-family: monospace;
+                border: 1px solid black;
+                padding: 10px;
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Household builder</h1>
+        <div class="builder">
+            <ol class="household"></ol>
+            <form>
+                <div>
+                    <label>Age
+                        <input type="text" name="age">
+                    </label>
+                </div>
+                <div>
+                    <label>Relationship
+                        <select name="rel">
+                            <option value="">---</option>
+                            <option value="self">Self</option>
+                            <option value="spouse">Spouse</option>
+                            <option value="child">Child</option>
+                            <option value="parent">Parent</option>
+                            <option value="grandparent">Grandparent</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </label>
+                </div>
+                <div>
+                    <label>Smoker?
+                        <input type="checkbox" name="smoker">
+                    </label>
+                </div>
+                <div>
+                    <button class="add">add</button>
+                </div>
+                <div>
+                    <button type="submit">submit</button>
+                </div>
+            </form>
+        </div>
+        <pre class="debug"></pre>
+        <script>
+
+        //create the array to store family members and errors
+        var familyMembers = [];
+        var errors = '';
+
+        // function for generating "unique-ish" IDs
+        function generateId() {
+            var date = new Date();
+            var components = [
+                date.getYear(),
+                date.getMonth(),
+                date.getDate(),
+                date.getHours(),
+                date.getMinutes(),
+                date.getSeconds(),
+                date.getMilliseconds()
+            ];
+
+            var id = components.join("");
+            return id;
+        }
+
+        
+
+        var forEach = function (array, callback, scope) {
+          for (var i = 0; i < array.length; i++) {
+            callback.call(scope, i, array[i]); // passes back stuff we need
+          }
+        };
+
+        //store the add button in addFamilyMember
+        var addFamilyMember = document.querySelector("button.add");
+        //store the submit button in submitFamily
+        var submitFamily = document.querySelector("button[type=submit]");
+
+        submitFamily.addEventListener("click", function(e) {
+            e.preventDefault();
+            var familyMemberIds = [];
+            var familyMembersJSON = {};
+            var familyNodeList = document.getElementsByClassName("family-member");
+            forEach(familyNodeList, function (index, value) {
+                familyMemberIds.push(value.id);
+            });
+            familyMemberIds.forEach(function(id){
+                function findMember(familyMembers) { 
+                    return familyMembers.id === id;
+                }
+                var thisMember = familyMembers.find(findMember);
+                
+                familyMembersJSON[id] = thisMember;
+            });
+            console.log('you submitted a form with: ' + JSON.stringify(familyMembersJSON));
+                    
+        });
+
+
+        //listen to addFamilyMember form for click event
+        addFamilyMember.addEventListener("click", function(e) {
+            e.preventDefault();
+            
+            // get values from inputs (and parseInt the age string)
+            var age = document.getElementsByName('age')[0].value;
+            var parsedAgeString = parseInt(age) || 0;
+            var rel = document.getElementsByName('rel')[0].value;
+            var smoker = document.getElementsByName('smoker')[0].checked;
+
+            // check for errors
+            if( parsedAgeString <= 0) errors += 'Please specify an age.\n';
+            if(rel == '') errors += 'Please specify a relation.\n';
+
+            // if errors, display alert with errors
+            if(errors != '') { 
+                alert(errors); 
+                e.preventDefault();
+                errors = '';
+                return;
+            }
+
+            // build familyMember object
+            var familyMember = {
+                id:  generateId(),
+                age: parsedAgeString,
+                rel: rel,
+                smoker: smoker
+            }
+
+
+            familyMembers.push(familyMember);
+            var stringId = familyMember.id.toString();
+
+            var element = document.createElement("div");
+                element.setAttribute("id", stringId);
+                element.setAttribute("class", 'family-member');
+                element.innerHTML = 'member #' + familyMembers.length + ': ' + parsedAgeString + ' ' +  rel + ' ' + smoker;
+            
+            var button = document.createElement("button");
+                button.setAttribute("id", stringId);
+                button.innerHTML = 'delete';
+                button.addEventListener("click", function(e) {
+                    function findMember(familyMembers) { 
+                        return familyMembers.id === e.target.id;
+                    };
+                    var thisMember = familyMembers.find(findMember);
+                    var thisMemberElement = document.getElementById(thisMember.id);
+                    thisMemberElement.outerHTML = "";
+                    delete thisMemberElement;
+                });
+
+                element.appendChild(button);
+                document.body.appendChild(element);
+                console.log(element);
+            
+        });
+
+
+            
+
+
+
+
+
+        </script>
+    </body>
+</html>
+
+
+
+
+
+
+
