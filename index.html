@@ -107,7 +107,11 @@
                 // add object to final object with all family members
                 familyMembersJSON[id] = thisMember;
             });
+            //stick JSON into the pre tag with class "debug"
+            var preTagNode = document.querySelector("pre.debug");
+            preTagNode.innerHTML = JSON.stringify(familyMembersJSON);
             console.log('you submitted a form with: ' + JSON.stringify(familyMembersJSON));
+
 
             //TODO: clear list of family members from screen
             //TODO: add an alert saying it was submitted successfully
