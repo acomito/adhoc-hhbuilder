@@ -54,6 +54,7 @@
 
         //create the array to store family members and errors
         var familyMembers = [];
+        //create variable to hold error messages
         var errors = '';
 
         // function for generating "unique-ish" IDs
@@ -68,13 +69,11 @@
                 date.getSeconds(),
                 date.getMilliseconds()
             ];
-
             var id = components.join("");
             return id;
         }
 
-        
-
+        //function for doing a forEach with a NodeList (several options for this, chose this instead of messing with array prototypes)
         var forEach = function (array, callback, scope) {
           for (var i = 0; i < array.length; i++) {
             callback.call(scope, i, array[i]); // passes back stuff we need
@@ -86,6 +85,7 @@
         //store the submit button in submitFamily
         var submitFamily = document.querySelector("button[type=submit]");
 
+        //add listender to submit button
         submitFamily.addEventListener("click", function(e) {
             e.preventDefault();
             //stores the IDs grabbed from final list of dom nodes
@@ -117,11 +117,11 @@
         });
 
 
-        //listen to addFamilyMember form for click event
+        //add listender to add button for adding a family member
         addFamilyMember.addEventListener("click", function(e) {
             e.preventDefault();
             
-            // get values from inputs (and parseInt the age string)
+            // get values from inputs (and parseInt the age which comes to us as a string instead of a number)
             var age = document.getElementsByName('age')[0].value;
             var parsedAgeString = parseInt(age) || 0;
             var rel = document.getElementsByName('rel')[0].value;
@@ -147,15 +147,16 @@
                 smoker: smoker
             }
 
-
+            //add object to familyMembers array
             familyMembers.push(familyMember);
+            //convert id to be used as a "key" of sorts inside of each div's id attribute
             var stringId = familyMember.id.toString();
-
+            //create a div for each family member you add with some info
             var element = document.createElement("div");
                 element.setAttribute("id", stringId);
                 element.setAttribute("class", 'family-member');
                 element.innerHTML = 'member #' + familyMembers.length + ': ' + parsedAgeString + ' ' +  rel + ' ' + smoker;
-            
+            //create a  corresponding delete button for each family member added to the DOM
             var button = document.createElement("button");
                 button.setAttribute("id", stringId);
                 button.innerHTML = 'delete';
@@ -170,6 +171,7 @@
                 });
 
                 element.appendChild(button);
+                // stick that baby in the DOM, yo
                 document.body.appendChild(element);
 
                 //TODO: clear form after successfully added family member
