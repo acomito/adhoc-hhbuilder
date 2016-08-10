@@ -88,24 +88,31 @@
 
         submitFamily.addEventListener("click", function(e) {
             e.preventDefault();
+            //stores the IDs grabbed from final list of dom nodes
             var familyMemberIds = [];
             var familyMembersJSON = {};
+            // get all nodes of the family members
             var familyNodeList = document.getElementsByClassName("family-member");
+            // go through each node in the NodeList and extract the id
             forEach(familyNodeList, function (index, value) {
                 familyMemberIds.push(value.id);
             });
+            // go through the array of family member IDs, find corresponding objects in the familyMembers array, 
+            // store the objects inside of the final JSON object to be sent to the server.
             familyMemberIds.forEach(function(id){
                 function findMember(familyMembers) { 
                     return familyMembers.id === id;
                 }
                 var thisMember = familyMembers.find(findMember);
-                
+                // add object to final object with all family members
                 familyMembersJSON[id] = thisMember;
             });
             console.log('you submitted a form with: ' + JSON.stringify(familyMembersJSON));
 
             //TODO: clear list of family members from screen
             //TODO: add an alert saying it was submitted successfully
+            //TODO: abstract the function passed to find, it is used in both add family and submit family.
+            //TODO: current source of truth is the dom (eeeeek). Move the source of truth to be the familyMembers array
                     
         });
 
